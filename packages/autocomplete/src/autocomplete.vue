@@ -236,6 +236,7 @@ export default {
       this.debouncedGetData(value);
     },
     handleChange(event) {
+      console.log(event);
       this.$emit("change", event.target.value);
     },
     handleFocus(event) {
