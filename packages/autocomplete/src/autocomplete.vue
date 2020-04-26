@@ -228,7 +228,7 @@ export default {
       });
     },
     handleInput(value) {
-      if (lastSearch == value) {
+      if (this.lastSearch == value) {
         return;
       }
       this.$emit("input", value);
