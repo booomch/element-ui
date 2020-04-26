@@ -227,6 +227,7 @@ export default {
       });
     },
     handleInput(value) {
+      console.log("handleInput", value);
       this.$emit("input", value);
       this.suggestionDisabled = false;
       if (!this.triggerOnFocus && !value) {
