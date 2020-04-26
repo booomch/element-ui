@@ -62,6 +62,7 @@ export default {
   },
 
   mounted() {
+    console.log(this.$parent.$refs);
     this.$parent.popperElm = this.popperElm = this.$el;
     this.referenceElm =
       this.$parent.$refs.input.$refs.input ||
