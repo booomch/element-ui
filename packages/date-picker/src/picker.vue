@@ -6,6 +6,7 @@
     :disabled="pickerDisabled"
     :size="pickerSize"
     :name="name"
+    v-mask="maskByFormat"
     v-bind="firstInputId"
     v-if="!ranged"
     v-clickoutside="handleClose"
@@ -18,18 +19,16 @@
     @mouseenter.native="handleMouseEnter"
     @mouseleave.native="showClose = false"
     :validateEvent="false"
-    ref="reference">
-    <i slot="prefix"
-      class="el-input__icon"
-      :class="triggerClass"
-      @click="handleFocus">
-    </i>
-    <i slot="suffix"
+    ref="reference"
+  >
+    <i slot="prefix" class="el-input__icon" :class="triggerClass" @click="handleFocus"></i>
+    <i
+      slot="suffix"
       class="el-input__icon"
       @click="handleClickIcon"
       :class="[showClose ? '' + clearIcon : '']"
-      v-if="haveTrigger">
-    </i>
+      v-if="haveTrigger"
+    ></i>
   </el-input>
   <div
     class="el-date-editor el-range-editor el-input__inner"
@@ -45,7 +44,8 @@
     @keydown="handleKeydown"
     ref="reference"
     v-clickoutside="handleClose"
-    v-else>
+    v-else
+  >
     <i :class="['el-input__icon', 'el-range__icon', triggerClass]"></i>
     <input
       autocomplete="off"
@@ -58,7 +58,8 @@
       @input="handleStartInput"
       @change="handleStartChange"
       @focus="handleFocus"
-      class="el-range-input">
+      class="el-range-input"
+    />
     <slot name="range-separator">
       <span class="el-range-separator">{{ rangeSeparator }}</span>
     </slot>
@@ -73,24 +74,31 @@
       @input="handleEndInput"
       @change="handleEndChange"
       @focus="handleFocus"
-      class="el-range-input">
+      class="el-range-input"
+    />
     <i
       @click="handleClickIcon"
       v-if="haveTrigger"
       :class="[showClose ? '' + clearIcon : '']"
-      class="el-input__icon el-range__close-icon">
-    </i>
+      class="el-input__icon el-range__close-icon"
+    ></i>
   </div>
 </template>
 
 <script>
-import Vue from 'vue';
-import Clickoutside from 'element-ui/src/utils/clickoutside';
-import { formatDate, parseDate, isDateObject, getWeekNumber } from 'element-ui/src/utils/date-util';
-import Popper from 'element-ui/src/utils/vue-popper';
-import Emitter from 'element-ui/src/mixins/emitter';
-import ElInput from 'element-ui/packages/input';
-import merge from 'element-ui/src/utils/merge';
+import { mask } from "vue-the-mask";
+import Vue from "vue";
+import Clickoutside from "element-ui/src/utils/clickoutside";
+import {
+  formatDate,
+  parseDate,
+  isDateObject,
+  getWeekNumber
+} from "element-ui/src/utils/date-util";
+import Popper from "element-ui/src/utils/vue-popper";
+import Emitter from "element-ui/src/mixins/emitter";
+import ElInput from "element-ui/packages/input";
+import merge from "element-ui/src/utils/merge";
 
 const NewPopper = {
   props: {
@@ -107,37 +115,37 @@ const NewPopper = {
 };
 
 const DEFAULT_FORMATS = {
-  date: 'yyyy-MM-dd',
-  month: 'yyyy-MM',
-  datetime: 'yyyy-MM-dd HH:mm:ss',
-  time: 'HH:mm:ss',
-  week: 'yyyywWW',
-  timerange: 'HH:mm:ss',
-  daterange: 'yyyy-MM-dd',
-  monthrange: 'yyyy-MM',
-  datetimerange: 'yyyy-MM-dd HH:mm:ss',
-  year: 'yyyy'
+  date: "yyyy-MM-dd",
+  month: "yyyy-MM",
+  datetime: "yyyy-MM-dd HH:mm:ss",
+  time: "HH:mm:ss",
+  week: "yyyywWW",
+  timerange: "HH:mm:ss",
+  daterange: "yyyy-MM-dd",
+  monthrange: "yyyy-MM",
+  datetimerange: "yyyy-MM-dd HH:mm:ss",
+  year: "yyyy"
 };
 const HAVE_TRIGGER_TYPES = [
-  'date',
-  'datetime',
-  'time',
-  'time-select',
-  'week',
-  'month',
-  'year',
-  'daterange',
-  'monthrange',
-  'timerange',
-  'datetimerange',
-  'dates'
+  "date",
+  "datetime",
+  "time",
+  "time-select",
+  "week",
+  "month",
+  "year",
+  "daterange",
+  "monthrange",
+  "timerange",
+  "datetimerange",
+  "dates"
 ];
 const DATE_FORMATTER = function(value, format) {
-  if (format === 'timestamp') return value.getTime();
+  if (format === "timestamp") return value.getTime();
   return formatDate(value, format);
 };
 const DATE_PARSER = function(text, format) {
-  if (format === 'timestamp') return new Date(Number(text));
+  if (format === "timestamp") return new Date(Number(text));
   return parseDate(text, format);
 };
 const RANGE_FORMATTER = function(value, format) {
@@ -149,7 +157,7 @@ const RANGE_FORMATTER = function(value, format) {
       return [DATE_FORMATTER(start, format), DATE_FORMATTER(end, format)];
     }
   }
-  return '';
+  return "";
 };
 const RANGE_PARSER = function(array, format, separator) {
   if (!Array.isArray(array)) {
@@ -166,11 +174,11 @@ const RANGE_PARSER = function(array, format, separator) {
 const TYPE_VALUE_RESOLVER_MAP = {
   default: {
     formatter(value) {
-      if (!value) return '';
-      return '' + value;
+      if (!value) return "";
+      return "" + value;
     },
     parser(text) {
-      if (text === undefined || text === '') return null;
+      if (text === undefined || text === "") return null;
       return text;
     }
   },
@@ -181,12 +189,14 @@ const TYPE_VALUE_RESOLVER_MAP = {
       const trueDate = new Date(value);
       if (week === 1 && month === 11) {
         trueDate.setHours(0, 0, 0, 0);
-        trueDate.setDate(trueDate.getDate() + 3 - (trueDate.getDay() + 6) % 7);
+        trueDate.setDate(
+          trueDate.getDate() + 3 - ((trueDate.getDay() + 6) % 7)
+        );
       }
       let date = formatDate(trueDate, format);
 
       date = /WW/.test(date)
-        ? date.replace(/WW/, week < 10 ? '0' + week : week)
+        ? date.replace(/WW/, week < 10 ? "0" + week : week)
         : date.replace(/W/, week);
       return date;
     },
@@ -233,8 +243,8 @@ const TYPE_VALUE_RESOLVER_MAP = {
   },
   number: {
     formatter(value) {
-      if (!value) return '';
-      return '' + value;
+      if (!value) return "";
+      return "" + value;
     },
     parser(text) {
       let result = Number(text);
@@ -251,22 +261,27 @@ const TYPE_VALUE_RESOLVER_MAP = {
       return value.map(date => DATE_FORMATTER(date, format));
     },
     parser(value, format) {
-      return (typeof value === 'string' ? value.split(', ') : value)
-        .map(date => date instanceof Date ? date : DATE_PARSER(date, format));
+      return (typeof value === "string" ? value.split(", ") : value).map(date =>
+        date instanceof Date ? date : DATE_PARSER(date, format)
+      );
     }
   }
 };
 const PLACEMENT_MAP = {
-  left: 'bottom-start',
-  center: 'bottom',
-  right: 'bottom-end'
+  left: "bottom-start",
+  center: "bottom",
+  right: "bottom-end"
 };
 
-const parseAsFormatAndType = (value, customFormat, type, rangeSeparator = '-') => {
+const parseAsFormatAndType = (
+  value,
+  customFormat,
+  type,
+  rangeSeparator = "-"
+) => {
   if (!value) return null;
   const parser = (
-    TYPE_VALUE_RESOLVER_MAP[type] ||
-    TYPE_VALUE_RESOLVER_MAP['default']
+    TYPE_VALUE_RESOLVER_MAP[type] || TYPE_VALUE_RESOLVER_MAP["default"]
   ).parser;
   const format = customFormat || DEFAULT_FORMATS[type];
   return parser(value, format, rangeSeparator);
@@ -275,8 +290,7 @@ const parseAsFormatAndType = (value, customFormat, type, rangeSeparator = '-') =
 const formatAsFormatAndType = (value, customFormat, type) => {
   if (!value) return null;
   const formatter = (
-    TYPE_VALUE_RESOLVER_MAP[type] ||
-    TYPE_VALUE_RESOLVER_MAP['default']
+    TYPE_VALUE_RESOLVER_MAP[type] || TYPE_VALUE_RESOLVER_MAP["default"]
   ).formatter;
   const format = customFormat || DEFAULT_FORMATS[type];
   return formatter(value, format);
@@ -317,7 +331,7 @@ const valueEquals = function(a, b) {
 };
 
 const isString = function(val) {
-  return typeof val === 'string' || val instanceof String;
+  return typeof val === "string" || val instanceof String;
 };
 
 const validator = function(val) {
@@ -335,10 +349,10 @@ export default {
 
   inject: {
     elForm: {
-      default: ''
+      default: ""
     },
     elFormItem: {
-      default: ''
+      default: ""
     }
   },
 
@@ -353,10 +367,10 @@ export default {
     prefixIcon: String,
     clearIcon: {
       type: String,
-      default: 'el-icon-circle-close'
+      default: "el-icon-circle-close"
     },
     name: {
-      default: '',
+      default: "",
       validator
     },
     disabled: Boolean,
@@ -365,7 +379,7 @@ export default {
       default: true
     },
     id: {
-      default: '',
+      default: "",
       validator
     },
     popperClass: String,
@@ -375,13 +389,13 @@ export default {
     },
     align: {
       type: String,
-      default: 'left'
+      default: "left"
     },
     value: {},
     defaultValue: {},
     defaultTime: {},
     rangeSeparator: {
-      default: '-'
+      default: "-"
     },
     pickerOptions: {},
     unlinkPanels: Boolean,
@@ -393,7 +407,7 @@ export default {
 
   components: { ElInput },
 
-  directives: { Clickoutside },
+  directives: { Clickoutside, mask },
 
   data() {
     return {
@@ -410,15 +424,17 @@ export default {
       if (this.readonly || this.pickerDisabled) return;
       if (val) {
         this.showPicker();
-        this.valueOnOpen = Array.isArray(this.value) ? [...this.value] : this.value;
+        this.valueOnOpen = Array.isArray(this.value)
+          ? [...this.value]
+          : this.value;
       } else {
         this.hidePicker();
         this.emitChange(this.value);
         this.userInput = null;
         if (this.validateEvent) {
-          this.dispatch('ElFormItem', 'el.form.blur');
+          this.dispatch("ElFormItem", "el.form.blur");
         }
-        this.$emit('blur', this);
+        this.$emit("blur", this);
         this.blur();
       }
     },
@@ -437,15 +453,22 @@ export default {
       }
     },
     value(val, oldVal) {
-      if (!valueEquals(val, oldVal) && !this.pickerVisible && this.validateEvent) {
-        this.dispatch('ElFormItem', 'el.form.change', val);
+      if (
+        !valueEquals(val, oldVal) &&
+        !this.pickerVisible &&
+        this.validateEvent
+      ) {
+        this.dispatch("ElFormItem", "el.form.change", val);
       }
     }
   },
 
   computed: {
+    maskByFormat() {
+      return format.replace(/(?!-)[^\/.]/g, "X");
+    },
     ranged() {
-      return this.type.indexOf('range') > -1;
+      return this.type.indexOf("range") > -1;
     },
 
     reference() {
@@ -455,7 +478,7 @@ export default {
 
     refInput() {
       if (this.reference) {
-        return [].slice.call(this.reference.querySelectorAll('input'));
+        return [].slice.call(this.reference.querySelectorAll("input"));
       }
       return [];
     },
@@ -477,64 +500,83 @@ export default {
     },
 
     triggerClass() {
-      return this.prefixIcon || (this.type.indexOf('time') !== -1 ? 'el-icon-time' : 'el-icon-date');
+      return (
+        this.prefixIcon ||
+        (this.type.indexOf("time") !== -1 ? "el-icon-time" : "el-icon-date")
+      );
     },
 
     selectionMode() {
-      if (this.type === 'week') {
-        return 'week';
-      } else if (this.type === 'month') {
-        return 'month';
-      } else if (this.type === 'year') {
-        return 'year';
-      } else if (this.type === 'dates') {
-        return 'dates';
+      if (this.type === "week") {
+        return "week";
+      } else if (this.type === "month") {
+        return "month";
+      } else if (this.type === "year") {
+        return "year";
+      } else if (this.type === "dates") {
+        return "dates";
       }
 
-      return 'day';
+      return "day";
     },
 
     haveTrigger() {
-      if (typeof this.showTrigger !== 'undefined') {
+      if (typeof this.showTrigger !== "undefined") {
         return this.showTrigger;
       }
       return HAVE_TRIGGER_TYPES.indexOf(this.type) !== -1;
     },
 
     displayValue() {
-      const formattedValue = formatAsFormatAndType(this.parsedValue, this.format, this.type, this.rangeSeparator);
+      const formattedValue = formatAsFormatAndType(
+        this.parsedValue,
+        this.format,
+        this.type,
+        this.rangeSeparator
+      );
       if (Array.isArray(this.userInput)) {
         return [
-          this.userInput[0] || (formattedValue && formattedValue[0]) || '',
-          this.userInput[1] || (formattedValue && formattedValue[1]) || ''
+          this.userInput[0] || (formattedValue && formattedValue[0]) || "",
+          this.userInput[1] || (formattedValue && formattedValue[1]) || ""
         ];
       } else if (this.userInput !== null) {
         return this.userInput;
       } else if (formattedValue) {
-        return this.type === 'dates'
-          ? formattedValue.join(', ')
+        return this.type === "dates"
+          ? formattedValue.join(", ")
           : formattedValue;
       } else {
-        return '';
+        return "";
       }
     },
 
     parsedValue() {
       if (!this.value) return this.value; // component value is not set
-      if (this.type === 'time-select') return this.value; // time-select does not require parsing, this might change in next major version
+      if (this.type === "time-select") return this.value; // time-select does not require parsing, this might change in next major version
 
-      const valueIsDateObject = isDateObject(this.value) || (Array.isArray(this.value) && this.value.every(isDateObject));
+      const valueIsDateObject =
+        isDateObject(this.value) ||
+        (Array.isArray(this.value) && this.value.every(isDateObject));
       if (valueIsDateObject) {
         return this.value;
       }
 
       if (this.valueFormat) {
-        return parseAsFormatAndType(this.value, this.valueFormat, this.type, this.rangeSeparator) || this.value;
+        return (
+          parseAsFormatAndType(
+            this.value,
+            this.valueFormat,
+            this.type,
+            this.rangeSeparator
+          ) || this.value
+        );
       }
 
       // NOTE: deal with common but incorrect usage, should remove in next major version
       // user might provide string / timestamp without value-format, coerce them into date (or array of date)
-      return Array.isArray(this.value) ? this.value.map(val => new Date(val)) : new Date(this.value);
+      return Array.isArray(this.value)
+        ? this.value.map(val => new Date(val))
+        : new Date(this.value);
     },
 
     _elFormItemSize() {
@@ -580,7 +622,7 @@ export default {
     };
     this.placement = PLACEMENT_MAP[this.align] || PLACEMENT_MAP.left;
 
-    this.$on('fieldReset', this.handleFieldReset);
+    this.$on("fieldReset", this.handleFieldReset);
   },
 
   methods: {
@@ -598,18 +640,33 @@ export default {
 
     // {parse, formatTo} Value deals maps component value with internal Date
     parseValue(value) {
-      const isParsed = isDateObject(value) || (Array.isArray(value) && value.every(isDateObject));
+      const isParsed =
+        isDateObject(value) ||
+        (Array.isArray(value) && value.every(isDateObject));
       if (this.valueFormat && !isParsed) {
-        return parseAsFormatAndType(value, this.valueFormat, this.type, this.rangeSeparator) || value;
+        return (
+          parseAsFormatAndType(
+            value,
+            this.valueFormat,
+            this.type,
+            this.rangeSeparator
+          ) || value
+        );
       } else {
         return value;
       }
     },
 
     formatToValue(date) {
-      const isFormattable = isDateObject(date) || (Array.isArray(date) && date.every(isDateObject));
+      const isFormattable =
+        isDateObject(date) || (Array.isArray(date) && date.every(isDateObject));
       if (this.valueFormat && isFormattable) {
-        return formatAsFormatAndType(date, this.valueFormat, this.type, this.rangeSeparator);
+        return formatAsFormatAndType(
+          date,
+          this.valueFormat,
+          this.type,
+          this.rangeSeparator
+        );
       } else {
         return date;
       }
@@ -617,12 +674,16 @@ export default {
 
     // {parse, formatTo} String deals with user input
     parseString(value) {
-      const type = Array.isArray(value) ? this.type : this.type.replace('range', '');
+      const type = Array.isArray(value)
+        ? this.type
+        : this.type.replace("range", "");
       return parseAsFormatAndType(value, this.format, type);
     },
 
     formatToString(value) {
-      const type = Array.isArray(value) ? this.type : this.type.replace('range', '');
+      const type = Array.isArray(value)
+        ? this.type
+        : this.type.replace("range", "");
       return formatAsFormatAndType(value, this.format, type);
     },
 
@@ -644,7 +705,7 @@ export default {
           }
         }
       }
-      if (this.userInput === '') {
+      if (this.userInput === "") {
         this.emitInput(null);
         this.emitChange(null);
         this.userInput = null;
@@ -701,7 +762,7 @@ export default {
         this.emitInput(null);
         this.emitChange(null);
         this.showClose = false;
-        if (this.picker && typeof this.picker.handleClear === 'function') {
+        if (this.picker && typeof this.picker.handleClear === "function") {
           this.picker.handleClear();
         }
       } else {
@@ -713,15 +774,21 @@ export default {
       if (!this.pickerVisible) return;
       this.pickerVisible = false;
 
-      if (this.type === 'dates') {
+      if (this.type === "dates") {
         // restore to former value
-        const oldValue = parseAsFormatAndType(this.valueOnOpen, this.valueFormat, this.type, this.rangeSeparator) || this.valueOnOpen;
+        const oldValue =
+          parseAsFormatAndType(
+            this.valueOnOpen,
+            this.valueFormat,
+            this.type,
+            this.rangeSeparator
+          ) || this.valueOnOpen;
         this.emitInput(oldValue);
       }
     },
 
     handleFieldReset(initialValue) {
-      this.userInput = initialValue === '' ? null : initialValue;
+      this.userInput = initialValue === "" ? null : initialValue;
     },
 
     handleFocus() {
@@ -730,7 +797,7 @@ export default {
       if (HAVE_TRIGGER_TYPES.indexOf(type) !== -1 && !this.pickerVisible) {
         this.pickerVisible = true;
       }
-      this.$emit('focus', this);
+      this.$emit("focus", this);
     },
 
     handleKeydown(event) {
@@ -765,7 +832,10 @@ export default {
 
       // Enter
       if (keyCode === 13) {
-        if (this.userInput === '' || this.isValidValue(this.parseString(this.displayValue))) {
+        if (
+          this.userInput === "" ||
+          this.isValidValue(this.parseString(this.displayValue))
+        ) {
           this.handleChange();
           this.pickerVisible = this.picker.visible = false;
           this.blur();
@@ -792,7 +862,7 @@ export default {
       if (HAVE_TRIGGER_TYPES.indexOf(type) !== -1 && !this.pickerVisible) {
         this.pickerVisible = true;
       }
-      this.$emit('focus', this);
+      this.$emit("focus", this);
     },
 
     hidePicker() {
@@ -827,11 +897,13 @@ export default {
       this.picker.popperClass = this.popperClass;
       this.popperElm = this.picker.$el;
       this.picker.width = this.reference.getBoundingClientRect().width;
-      this.picker.showTime = this.type === 'datetime' || this.type === 'datetimerange';
+      this.picker.showTime =
+        this.type === "datetime" || this.type === "datetimerange";
       this.picker.selectionMode = this.selectionMode;
       this.picker.unlinkPanels = this.unlinkPanels;
-      this.picker.arrowControl = this.arrowControl || this.timeArrowControl || false;
-      this.$watch('format', (format) => {
+      this.picker.arrowControl =
+        this.arrowControl || this.timeArrowControl || false;
+      this.$watch("format", format => {
         this.picker.format = format;
       });
 
@@ -844,13 +916,17 @@ export default {
           const format = DEFAULT_FORMATS.timerange;
 
           ranges = Array.isArray(ranges) ? ranges : [ranges];
-          this.picker.selectableRange = ranges.map(range => parser(range, format, this.rangeSeparator));
+          this.picker.selectableRange = ranges.map(range =>
+            parser(range, format, this.rangeSeparator)
+          );
         }
 
         for (const option in options) {
-          if (options.hasOwnProperty(option) &&
-              // 忽略 time-picker 的该配置项
-              option !== 'selectableRange') {
+          if (
+            options.hasOwnProperty(option) &&
+            // 忽略 time-picker 的该配置项
+            option !== "selectableRange"
+          ) {
             this.picker[option] = options[option];
           }
         }
@@ -861,24 +937,28 @@ export default {
         }
       };
       updateOptions();
-      this.unwatchPickerOptions = this.$watch('pickerOptions', () => updateOptions(), { deep: true });
+      this.unwatchPickerOptions = this.$watch(
+        "pickerOptions",
+        () => updateOptions(),
+        { deep: true }
+      );
       this.$el.appendChild(this.picker.$el);
       this.picker.resetView && this.picker.resetView();
 
-      this.picker.$on('dodestroy', this.doDestroy);
-      this.picker.$on('pick', (date = '', visible = false) => {
+      this.picker.$on("dodestroy", this.doDestroy);
+      this.picker.$on("pick", (date = "", visible = false) => {
         this.userInput = null;
         this.pickerVisible = this.picker.visible = visible;
         this.emitInput(date);
         this.picker.resetView && this.picker.resetView();
       });
 
-      this.picker.$on('select-range', (start, end, pos) => {
+      this.picker.$on("select-range", (start, end, pos) => {
         if (this.refInput.length === 0) return;
-        if (!pos || pos === 'min') {
+        if (!pos || pos === "min") {
           this.refInput[0].setSelectionRange(start, end);
           this.refInput[0].focus();
-        } else if (pos === 'max') {
+        } else if (pos === "max") {
           this.refInput[1].setSelectionRange(start, end);
           this.refInput[1].focus();
         }
@@ -889,7 +969,7 @@ export default {
       if (this.picker) {
         this.picker.$destroy();
         this.picker.$off();
-        if (typeof this.unwatchPickerOptions === 'function') {
+        if (typeof this.unwatchPickerOptions === "function") {
           this.unwatchPickerOptions();
         }
         this.picker.$el.parentNode.removeChild(this.picker.$el);
@@ -899,10 +979,10 @@ export default {
     emitChange(val) {
       // determine user real change only
       if (!valueEquals(val, this.valueOnOpen)) {
-        this.$emit('change', val);
+        this.$emit("change", val);
         this.valueOnOpen = val;
         if (this.validateEvent) {
-          this.dispatch('ElFormItem', 'el.form.change', val);
+          this.dispatch("ElFormItem", "el.form.change", val);
         }
       }
     },
@@ -910,7 +990,7 @@ export default {
     emitInput(val) {
       const formatted = this.formatToValue(val);
       if (!valueEquals(this.value, formatted)) {
-        this.$emit('input', formatted);
+        this.$emit("input", formatted);
       }
     },
 
