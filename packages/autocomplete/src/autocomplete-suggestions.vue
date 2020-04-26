@@ -62,12 +62,15 @@ export default {
   },
 
   mounted() {
-    console.log(this.$parent.$refs);
     this.$parent.popperElm = this.popperElm = this.$el;
-    this.referenceElm =
-      this.$parent.$refs.input.$refs.input ||
-      this.$parent.$refs.inputMasked.$refs.input ||
-      this.$parent.$refs.input.$refs.textarea;
+    if (this.$parent.$refs.input) {
+      this.referenceElm =
+        this.$parent.$refs.input.$refs.input ||
+        this.$parent.$refs.input.$refs.textarea;
+    }
+    if (this.$parent.$refs.inputMasked) {
+      this.referenceElm = this.$parent.$refs.inputMasked.$refs.input;
+    }
     this.referenceList = this.$el.querySelector(
       ".el-autocomplete-suggestion__list"
     );
