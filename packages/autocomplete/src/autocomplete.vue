@@ -236,8 +236,7 @@ export default {
       this.debouncedGetData(value);
     },
     handleChange(event) {
-      console.log(event);
-      this.$emit("change", event.target.value);
+      this.$emit("change", event);
     },
     handleFocus(event) {
       this.activated = true;
