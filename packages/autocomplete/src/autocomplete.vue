@@ -179,6 +179,7 @@ export default {
     suggestionVisible() {
       const suggestions = this.suggestions;
       let isValidData = Array.isArray(suggestions) && suggestions.length > 0;
+      console.log(isValidData, this.loading, this.activated);
       return (isValidData || this.loading) && this.activated;
     },
     id() {
@@ -239,7 +240,6 @@ export default {
       this.$emit("change", event);
     },
     handleFocus(event) {
-      console.log(event);
       this.activated = true;
       this.$emit("focus", event);
       if (this.triggerOnFocus) {
