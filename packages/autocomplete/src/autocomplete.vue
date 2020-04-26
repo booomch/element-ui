@@ -89,6 +89,7 @@ export default {
       type: String,
       default: "value"
     },
+    mask: String,
     popperClass: String,
     popperOptions: Object,
     placeholder: String,
