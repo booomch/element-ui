@@ -39,7 +39,7 @@
       ref="inputMasked"
       v-bind="[$props, $attrs]"
       v-mask="maskInput"
-      @input="handleInputMasked"
+      @input="handleInput"
       @change="handleChange"
       @focus="handleFocus"
       @blur="handleBlur"
@@ -168,6 +168,7 @@ export default {
   },
   data() {
     return {
+      lastSearch: "",
       activated: false,
       suggestions: [],
       loading: false,
@@ -179,7 +180,6 @@ export default {
     suggestionVisible() {
       const suggestions = this.suggestions;
       let isValidData = Array.isArray(suggestions) && suggestions.length > 0;
-      console.log(isValidData, this.loading, this.activated);
       return (isValidData || this.loading) && this.activated;
     },
     id() {
@@ -212,6 +212,7 @@ export default {
       }
       this.loading = true;
       this.fetchSuggestions(queryString, suggestions => {
+        this.lastSearch = queryString;
         this.loading = false;
         if (this.suggestionDisabled) {
           return;
@@ -226,23 +227,8 @@ export default {
         }
       });
     },
-    handleInputMasked(value) {
-      console.log("handleInputMasked", value);
-      if (!this.maskInput) {
-        return;
-      }
-      this.$emit("input", value);
-      this.suggestionDisabled = false;
-      if (!this.triggerOnFocus && !value) {
-        this.suggestionDisabled = true;
-        this.suggestions = [];
-        return;
-      }
-      this.debouncedGetData(value);
-    },
     handleInput(value) {
-      console.log("handleInput", value);
-      if (this.maskInput) {
+      if (lastSearch == value) {
         return;
       }
       this.$emit("input", value);
