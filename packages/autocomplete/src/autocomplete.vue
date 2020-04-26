@@ -39,7 +39,7 @@
       ref="inputMasked"
       v-bind="[$props, $attrs]"
       v-mask="maskInput"
-      @input="handleInput"
+      @input="handleInputMasked"
       @change="handleChange"
       @focus="handleFocus"
       @blur="handleBlur"
@@ -226,8 +226,25 @@ export default {
         }
       });
     },
+    handleInputMasked(value) {
+      console.log("handleInputMasked", value);
+      if (!this.maskInput) {
+        return;
+      }
+      this.$emit("input", value);
+      this.suggestionDisabled = false;
+      if (!this.triggerOnFocus && !value) {
+        this.suggestionDisabled = true;
+        this.suggestions = [];
+        return;
+      }
+      this.debouncedGetData(value);
+    },
     handleInput(value) {
       console.log("handleInput", value);
+      if (this.maskInput) {
+        return;
+      }
       this.$emit("input", value);
       this.suggestionDisabled = false;
       if (!this.triggerOnFocus && !value) {
