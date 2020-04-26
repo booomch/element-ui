@@ -10,7 +10,7 @@
     <el-input
       ref="input"
       v-bind="[$props, $attrs]"
-      v-mask="mask"
+      v-mask="maskInput"
       @input="handleInput"
       @change="handleChange"
       @focus="handleFocus"
@@ -89,7 +89,7 @@ export default {
       type: String,
       default: "value"
     },
-    mask: {
+    maskInput: {
       type: String,
       default: ""
     },
