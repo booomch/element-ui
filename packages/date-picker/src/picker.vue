@@ -465,6 +465,7 @@ export default {
 
   computed: {
     maskByFormat() {
+      console.log(this.format.replace(/(?!-)[^\/.]/g, "X"));
       return this.format.replace(/(?!-)[^\/.]/g, "X");
     },
     ranged() {
