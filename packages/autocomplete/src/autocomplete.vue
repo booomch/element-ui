@@ -239,6 +239,7 @@ export default {
       this.$emit("change", event);
     },
     handleFocus(event) {
+      console.log(event);
       this.activated = true;
       this.$emit("focus", event);
       if (this.triggerOnFocus) {
