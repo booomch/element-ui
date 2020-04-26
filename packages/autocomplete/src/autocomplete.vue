@@ -36,7 +36,7 @@
     </el-input>
     <el-input
       v-if="maskInput"
-      ref="input"
+      ref="inputMasked"
       v-bind="[$props, $attrs]"
       v-mask="maskInput"
       @input="handleInput"
@@ -318,6 +318,9 @@ export default {
       );
     },
     getInput() {
+      if (this.maskInput) {
+        return this.$refs.inputMasked.getInput();
+      }
       return this.$refs.input.getInput();
     }
   },
