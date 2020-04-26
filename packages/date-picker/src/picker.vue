@@ -465,7 +465,7 @@ export default {
 
   computed: {
     maskByFormat() {
-      return format.replace(/(?!-)[^\/.]/g, "X");
+      return this.format.replace(/(?!-)[^\/.]/g, "X");
     },
     ranged() {
       return this.type.indexOf("range") > -1;
