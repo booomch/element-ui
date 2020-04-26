@@ -8,6 +8,34 @@
     :aria-owns="id"
   >
     <el-input
+      v-if="!maskInput"
+      ref="input"
+      v-bind="[$props, $attrs]"
+      @input="handleInput"
+      @change="handleChange"
+      @focus="handleFocus"
+      @blur="handleBlur"
+      @clear="handleClear"
+      @keydown.up.native.prevent="highlight(highlightedIndex - 1)"
+      @keydown.down.native.prevent="highlight(highlightedIndex + 1)"
+      @keydown.enter.native="handleKeyEnter"
+      @keydown.native.tab="close"
+    >
+      <template slot="prepend" v-if="$slots.prepend">
+        <slot name="prepend"></slot>
+      </template>
+      <template slot="append" v-if="$slots.append">
+        <slot name="append"></slot>
+      </template>
+      <template slot="prefix" v-if="$slots.prefix">
+        <slot name="prefix"></slot>
+      </template>
+      <template slot="suffix" v-if="$slots.suffix">
+        <slot name="suffix"></slot>
+      </template>
+    </el-input>
+    <el-input
+      v-if="maskInput"
       ref="input"
       v-bind="[$props, $attrs]"
       v-mask="maskInput"
